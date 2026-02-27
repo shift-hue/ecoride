@@ -87,13 +87,13 @@ function WalletContent() {
           <h1 className="text-[36px] font-semibold leading-tight text-slate-900">Carbon Wallet</h1>
           <p className="mt-1 text-[14px] text-slate-600">Track your environmental impact and earnings in real-time.</p>
         </div>
-        <div className="inline-flex h-10 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700">
+        <div className="inline-flex h-10 items-center gap-2 rounded-full border border-white/40 bg-white/60 px-4 text-sm font-semibold text-slate-700">
           <Award className="h-4 w-4 text-amber-500" /> Gold Member
         </div>
       </div>
 
       {loading && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-500">Loading wallet...</div>
+        <div className="rounded-2xl border border-white/40 p-5 text-sm text-slate-600" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)'}}>Loading wallet...</div>
       )}
 
       {!loading && error && (
@@ -103,7 +103,7 @@ function WalletContent() {
       {!loading && !error && wallet && (
         <>
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.7fr_0.8fr]">
-            <div className="grid grid-cols-1 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:grid-cols-[1fr_0.9fr]">
+        <div className="grid grid-cols-1 rounded-2xl border border-white/40 p-5 shadow-sm md:grid-cols-[1fr_0.9fr]" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)'}}>
               <div>
                 <p className="text-[11px] font-semibold tracking-wide text-slate-500">TOTAL IMPACT</p>
                 <p className="mt-1 text-[48px] font-semibold leading-none text-slate-900">{totalKg}<span className="ml-1 text-[28px] font-medium text-slate-500">kg CO₂</span></p>
@@ -117,14 +117,54 @@ function WalletContent() {
               </div>
 
               <div className="mt-4 md:mt-0 md:pl-4">
-                <div className="h-[230px] rounded-2xl bg-[radial-gradient(circle_at_center,#d7ffd7_0%,#92c492_45%,#7fa37f_100%)] p-3">
-                  <div className="flex h-full flex-col justify-end rounded-xl bg-white/30 p-3 backdrop-blur-[1px]">
-                    <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
-                      <span>Next Goal</span>
-                      <span>150 kg</span>
+                <div className="relative h-[230px] overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_60%_40%,#c8f5cb_0%,#7ec87e_55%,#4a9e5c_100%)] p-3">
+                  {/* decorative blobs */}
+                  <div className="pointer-events-none absolute -right-4 -top-4 h-28 w-28 rounded-full bg-white/15" />
+                  <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-white/10" />
+
+                  {/* illustration area */}
+                  <div className="flex items-center justify-between px-1 pt-1">
+                    {/* tree + sun SVG */}
+                    <svg viewBox="0 0 80 70" className="h-[68px] w-[80px] shrink-0" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {/* sun */}
+                      <circle cx="62" cy="14" r="8" fill="#FFE66D" opacity="0.9"/>
+                      <line x1="62" y1="3" x2="62" y2="0" stroke="#FFE66D" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="62" y1="25" x2="62" y2="28" stroke="#FFE66D" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="51.5" y1="3.5" x2="49.4" y2="1.4" stroke="#FFE66D" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="72.5" y1="24.5" x2="74.6" y2="26.6" stroke="#FFE66D" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="73" y1="14" x2="76" y2="14" stroke="#FFE66D" strokeWidth="2" strokeLinecap="round"/>
+                      {/* big tree */}
+                      <ellipse cx="28" cy="32" rx="18" ry="20" fill="#2d8a4e" opacity="0.95"/>
+                      <ellipse cx="22" cy="38" rx="12" ry="14" fill="#3ca05e"/>
+                      <ellipse cx="34" cy="36" rx="13" ry="15" fill="#3ca05e"/>
+                      <rect x="25" y="50" width="6" height="14" rx="2" fill="#7a4f2d"/>
+                      {/* small tree */}
+                      <ellipse cx="12" cy="46" rx="8" ry="10" fill="#2d8a4e" opacity="0.85"/>
+                      <rect x="10" y="54" width="4" height="8" rx="1.5" fill="#7a4f2d"/>
+                      {/* ground */}
+                      <ellipse cx="28" cy="65" rx="20" ry="4" fill="#2d6a32" opacity="0.45"/>
+                    </svg>
+
+                    {/* reward pill */}
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="rounded-full bg-white/30 px-2 py-0.5 text-[10px] font-bold tracking-wide text-white backdrop-blur-sm">🏆 FREE REWARD</span>
+                      <span className="text-right text-[11px] font-semibold leading-tight text-white/90">Save 150 kg CO₂<br/>unlock eco badge</span>
                     </div>
-                    <div className="mt-2 h-2 rounded-full bg-white/70">
-                      <div className="h-2 rounded-full bg-brand-500" style={{ width: `${Math.min(100, Math.round((totalKg / 150) * 100))}%` }} />
+                  </div>
+
+                  {/* motivational text */}
+                  <p className="mt-1 px-1 text-[12px] font-semibold text-white drop-shadow">
+                    🌱 Every ride counts — keep going!
+                  </p>
+
+                  {/* progress */}
+                  <div className="absolute bottom-3 left-3 right-3 rounded-xl bg-white/30 p-3 backdrop-blur-[1px]">
+                    <div className="flex items-center justify-between text-xs font-semibold text-white">
+                      <span>Next Goal</span>
+                      <span>{totalKg} / 150 kg</span>
+                    </div>
+                    <div className="mt-2 h-2.5 rounded-full bg-white/40">
+                      <div className="h-2.5 rounded-full bg-white transition-all duration-700" style={{ width: `${Math.min(100, Math.round((totalKg / 150) * 100))}%` }} />
                     </div>
                   </div>
                 </div>
@@ -151,13 +191,13 @@ function WalletContent() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <section className="rounded-2xl border border-white/40 p-5 shadow-sm" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)'}}>
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="text-[22px] font-semibold text-slate-900">Impact Visualization</h2>
                 <p className="text-xs text-slate-500">CO₂ savings over the last 6 months</p>
               </div>
-              <button type="button" className="rounded-md border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600">Last 6 Months</button>
+              <button type="button" className="rounded-md border border-white/40 bg-white/50 px-3 py-1 text-xs font-medium text-slate-600">Last 6 Months</button>
             </div>
 
             <div className="mt-5 grid grid-cols-6 items-end gap-3 rounded-xl border-t border-slate-100 pt-4">
@@ -165,7 +205,7 @@ function WalletContent() {
                 <div key={bar.month} className="flex flex-col items-center gap-2">
                   <div className="relative flex h-52 w-full items-end">
                     <div
-                      className={bar.active ? 'w-full rounded-md bg-brand-500' : 'w-full rounded-md bg-emerald-100'}
+                      className={bar.active ? 'w-full rounded-md bg-brand-500' : 'w-full rounded-md bg-brand-400/30 border border-brand-400/40'}
                       style={{ height: `${bar.pct}%` }}
                     />
                     {bar.active && (
@@ -182,7 +222,7 @@ function WalletContent() {
 
           <section className="space-y-3">
             <h2 className="text-[24px] font-semibold text-slate-900">Recent Eco-Rides</h2>
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-hidden rounded-2xl border border-white/40 shadow-sm" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)'}}>
               {ridesList.length === 0 ? (
                 <div className="p-5 text-sm text-slate-500">No wallet transactions yet.</div>
               ) : (

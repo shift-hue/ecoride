@@ -11,3 +11,12 @@ body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
 }
+
+/* Hide UnicornStudio watermark */
+a[href*="unicorn.studio"],
+div[class*="unicorn-badge"],
+div[class*="us-badge"],
+[data-us-badge],
+[class*="unicornstudio-badge"] {
+  display: none !important;
+}

@@ -105,7 +105,7 @@ function OfferRideContent() {
         <p className="mt-1 text-[16px] text-slate-500">Share your commute, save money, and reduce your carbon footprint.</p>
       </div>
 
-      <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <section className="rounded-2xl border border-white/40 shadow-sm" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)'}}>
         <div className="rounded-t-2xl border-b border-slate-100 bg-[radial-gradient(#eaf2ea_1px,transparent_1px)] bg-[size:12px_12px] px-8 py-7">
           <div className="mx-auto flex w-full max-w-md items-center justify-center gap-7">
             <div className="text-center">
@@ -135,7 +135,7 @@ function OfferRideContent() {
                   <input
                     {...form.register('pickupZone')}
                     placeholder="e.g. North Campus Library"
-                    className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm text-slate-700 focus:outline-none"
+                    className="h-12 w-full rounded-xl border border-white/40 bg-white/50 pl-10 pr-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
                   />
                   <LocateFixed className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 </div>
@@ -146,7 +146,7 @@ function OfferRideContent() {
                   <input
                     {...form.register('destination')}
                     placeholder="e.g. Downtown Station"
-                    className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm text-slate-700 focus:outline-none"
+                    className="h-12 w-full rounded-xl border border-white/40 bg-white/50 pl-10 pr-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
                   />
                   <Flag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 </div>
@@ -164,7 +164,7 @@ function OfferRideContent() {
                   <input
                     {...form.register('departureTime')}
                     type="datetime-local"
-                    className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm text-slate-700 focus:outline-none"
+                    className="h-12 w-full rounded-xl border border-white/40 bg-white/50 pl-10 pr-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
                   />
                   <CalendarDays className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 </div>
@@ -182,7 +182,7 @@ function OfferRideContent() {
                         'h-12 rounded-xl border text-sm font-semibold transition',
                         selectedSeat === seat
                           ? 'border-brand-500 bg-brand-100 text-brand-700'
-                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
+                          : 'border-white/40 bg-white/50 text-slate-700 hover:bg-white/70'
                       )}
                     >
                       {seat === 4 ? '4+' : seat}
@@ -202,12 +202,12 @@ function OfferRideContent() {
                   min={1}
                   step={1}
                   placeholder="e.g. 50"
-                  className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm font-semibold text-slate-900 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                  className="h-12 w-full rounded-xl border border-white/40 bg-white/50 pl-9 pr-3 text-sm font-semibold text-slate-900 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
                 />
               </div>
               <p className="mt-1 text-xs text-slate-500">Amount each rider pays you per day for this ride.</p>
               {pricePerSeat != null && pricePerSeat > 0 && (
-                <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/50 border border-white/30 px-3 py-1 text-xs font-semibold text-slate-700">
                   ₹{Number(pricePerSeat).toLocaleString('en-IN')} per seat / day
                 </p>
               )}
@@ -276,7 +276,7 @@ function OfferRideContent() {
           )}
 
           <div className="flex justify-end gap-3 pt-2">
-            <Link href="/dashboard" className="inline-flex h-11 items-center rounded-xl border border-slate-200 bg-white px-7 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+            <Link href="/dashboard" className="inline-flex h-11 items-center rounded-xl border border-white/40 bg-white/50 px-7 text-sm font-semibold text-slate-700 hover:bg-white/70">
               Cancel
             </Link>
             <button

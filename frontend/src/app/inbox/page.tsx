@@ -113,10 +113,10 @@ function InboxContent() {
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" style={{ height: 'calc(100vh - 7.5rem)' }}>
+    <section className="overflow-hidden rounded-2xl border border-white/40 shadow-sm" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)', height: 'calc(100vh - 7.5rem)'}}>
       <div className="grid h-full grid-cols-1 xl:grid-cols-[320px_1fr]">
-        <aside className="border-r border-slate-200 bg-white">
-          <div className="border-b border-slate-200 px-4 py-4">
+        <aside className="border-r border-white/30 bg-white/40">
+          <div className="border-b border-white/30 px-4 py-4">
             <h1 className="text-[34px] font-semibold leading-none text-slate-900">Messages</h1>
           </div>
 
@@ -130,8 +130,8 @@ function InboxContent() {
                   type="button"
                   onClick={() => setActivePeerId(item.peerId)}
                   className={clsx(
-                    'flex w-full items-start gap-3 border-b border-slate-100 px-4 py-3 text-left',
-                    activePeerId === item.peerId ? 'bg-brand-50' : 'hover:bg-slate-50'
+                    'flex w-full items-start gap-3 border-b border-white/20 px-4 py-3 text-left',
+                    activePeerId === item.peerId ? 'bg-white/50' : 'hover:bg-white/30'
                   )}
                 >
                   <div className="relative">
@@ -158,8 +158,8 @@ function InboxContent() {
           )}
         </aside>
 
-        <main className="flex h-full flex-col bg-[#f8faf9]">
-          <header className="flex items-center justify-between border-b border-slate-200 bg-white px-5 py-3">
+        <main className="flex h-full flex-col bg-white/20">
+          <header className="flex items-center justify-between border-b border-white/30 bg-white/50 px-5 py-3">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">
@@ -198,7 +198,7 @@ function InboxContent() {
                       </div>
                     )}
 
-                    <div className={clsx('max-w-[76%] rounded-2xl px-4 py-3 text-[14px]', mine ? 'bg-brand-500 text-white' : 'bg-white text-slate-700')}>
+                    <div className={clsx('max-w-[76%] rounded-2xl px-4 py-3 text-[14px]', mine ? 'bg-brand-500 text-white' : 'bg-white/80 text-slate-700 shadow-sm')}>
                       {message.content}
                       <div className={clsx('mt-1 text-[10px]', mine ? 'text-white/70' : 'text-slate-400')}>
                         {format(new Date(message.createdAt), 'hh:mm a')}
@@ -217,8 +217,8 @@ function InboxContent() {
             </div>
           </div>
 
-          <footer className="border-t border-slate-200 bg-white px-5 py-3">
-            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+          <footer className="border-t border-white/30 bg-white/50 px-5 py-3">
+            <div className="flex items-center gap-3 rounded-xl border border-white/40 bg-white/50 px-3 py-2">
               <button type="button" className="text-slate-400">
                 <Plus className="h-4 w-4" />
               </button>

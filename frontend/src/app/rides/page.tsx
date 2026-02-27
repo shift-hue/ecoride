@@ -143,7 +143,7 @@ function RidesContent() {
         </div>
       </div>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-2xl border border-white/40 p-4 shadow-sm" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)'}}>
         <form onSubmit={searchForm.handleSubmit(onSearch)} className="grid grid-cols-1 gap-3 xl:grid-cols-[1.2fr_1.2fr_0.55fr_0.6fr]">
           {/* Pickup Zone */}
           <div>
@@ -181,7 +181,7 @@ function RidesContent() {
                 type="text"
                 autoComplete="off"
                 placeholder="Type destination…"
-                className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-3 pr-8 text-sm text-slate-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                className="h-12 w-full rounded-xl border border-white/40 bg-white/50 pl-3 pr-8 text-sm text-slate-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
               {searchForm.watch('destination') && (
                 <button type="button" onClick={() => searchForm.setValue('destination', '')}
@@ -200,7 +200,7 @@ function RidesContent() {
             <input
               {...searchForm.register('time')}
               type="time"
-              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+              className="h-12 w-full rounded-xl border border-white/40 bg-white/50 px-3 text-sm text-slate-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
             />
             {searchForm.formState.errors.time && (
               <p className="mt-1 text-xs text-red-500">{searchForm.formState.errors.time.message}</p>
@@ -225,10 +225,10 @@ function RidesContent() {
         <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <h2 className="text-[30px] font-semibold text-slate-900">{cards.length} Rides Available</h2>
           <div className="hidden items-center gap-2 md:flex">
-            <button type="button" className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600">
+            <button type="button" className="inline-flex h-9 items-center gap-1 rounded-lg border border-white/40 bg-white/50 px-3 text-xs font-semibold text-slate-600">
               <SlidersHorizontal className="h-3.5 w-3.5" /> Filters
             </button>
-            <button type="button" className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-brand-600">
+            <button type="button" className="inline-flex h-9 items-center gap-1 rounded-lg border border-white/40 bg-white/50 px-3 text-xs font-semibold text-brand-600">
               <ArrowUpDown className="h-3.5 w-3.5" /> Sort by Match
             </button>
           </div>
@@ -239,20 +239,20 @@ function RidesContent() {
         )}
 
         {!searchError && searchDone && cards.length === 0 && (
-          <div className="rounded-2xl border border-slate-200 bg-white px-5 py-6 text-sm text-slate-500">
+          <div className="rounded-2xl border border-white/40 px-5 py-6 text-sm text-slate-600" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)'}}>
             No rides found for <strong>{searchForm.getValues('pickupZone')}</strong> at the selected time. Try a different zone or time.
           </div>
         )}
 
         {!searchDone && (
-          <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-5 py-10 text-center text-sm text-slate-400">
+          <div className="rounded-2xl border border-dashed border-white/40 px-5 py-10 text-center text-sm text-slate-500" style={{background:'rgba(255,255,255,0.40)',backdropFilter:'blur(8px)',WebkitBackdropFilter:'blur(8px)'}}>
             Enter a pickup zone and time above, then hit <strong>Search</strong>
           </div>
         )}
 
         <div className="space-y-3">
           {cards.map((ride) => (
-            <article key={ride.id} className="grid rounded-2xl border border-slate-200 bg-white p-4 shadow-sm xl:grid-cols-[1.1fr_2.2fr_0.9fr]">
+            <article key={ride.id} className="grid rounded-2xl border border-white/40 p-4 shadow-sm xl:grid-cols-[1.1fr_2.2fr_0.9fr]" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)'}}>
               <div className="border-slate-100 pr-4 xl:border-r">
                 <div className="flex items-start gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 text-lg">{ride.avatar}</div>
@@ -263,7 +263,7 @@ function RidesContent() {
                 </div>
                 <div className={clsx(
                   'mt-4 rounded-xl px-3 py-2 text-center',
-                  ride.compatibility >= 90 ? 'bg-emerald-50' : 'bg-slate-100'
+                  ride.compatibility >= 90 ? 'bg-emerald-50/80' : 'bg-white/40 border border-white/30'
                 )}>
                   <p className="text-[11px] font-semibold tracking-wide text-slate-500">COMPATIBILITY</p>
                   <p className={clsx('text-[36px] font-semibold leading-tight', ride.compatibility >= 90 ? 'text-brand-600' : 'text-slate-700')}>
@@ -309,7 +309,7 @@ function RidesContent() {
                     'mt-4 inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-semibold',
                     ride.compatibility >= 90
                       ? 'bg-brand-500 text-slate-900 hover:bg-brand-400'
-                      : 'border border-brand-500 bg-white text-slate-900 hover:bg-brand-50'
+                      : 'border border-brand-500 bg-white/50 text-slate-900 hover:bg-brand-50'
                   )}
                 >
                   Request to Join
@@ -332,7 +332,7 @@ function Tag({
   label: string
 }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2.5 py-1 text-xs text-brand-700">
+    <span className="inline-flex items-center gap-1 rounded-md bg-white/50 px-2.5 py-1 text-xs text-brand-700 border border-white/30">
       <Icon className="h-3.5 w-3.5" />
       {label}
     </span>

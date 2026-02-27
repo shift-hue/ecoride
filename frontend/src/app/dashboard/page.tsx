@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext'
 import { carbonApi, trustApi, WalletDto, TrustProfileDto } from '@/lib/api'
 import AppShell from '@/components/AppShell'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import type { CSSProperties } from 'react'
 import {
   Leaf,
   ShieldCheck,
@@ -98,6 +99,12 @@ function DashboardContent() {
     },
   ]
 
+  const glassCard: CSSProperties = {
+    background: 'rgba(255,255,255,0.72)',
+    backdropFilter: 'blur(14px)',
+    WebkitBackdropFilter: 'blur(14px)',
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -105,7 +112,7 @@ function DashboardContent() {
         <p className="mt-1 text-[16px] text-brand-600">Welcome back, {user.name}! Your sustainable journey continues.</p>
       </div>
 
-      <section className="rounded-2xl bg-gradient-to-r from-emerald-950 via-green-950 to-emerald-900 p-6 shadow-md">
+      <section className="relative overflow-hidden rounded-2xl bg-emerald-950/85 p-6 shadow-md backdrop-blur-sm">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
             <span className="inline-flex items-center rounded-full bg-brand-500/25 px-4 py-1 text-xs font-semibold tracking-wide text-brand-200">
@@ -131,11 +138,11 @@ function DashboardContent() {
       </section>
 
       <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr_1fr_1.45fr]">
-        <StatCard icon={Leaf} label="Carbon Saved" value={`${carbonKg}`} unit="kg" delta="+12%" iconTone="green" />
-        <StatCard icon={ShieldCheck} label="Trust Score" value={trustScore.toFixed(1)} unit="/5.0" delta="+0.1" iconTone="blue" />
-        <StatCard icon={CarFront} label="Rides Completed" value={`${ridesCompleted}`} unit="" delta="+3" iconTone="amber" />
+        <StatCard icon={Leaf} label="Carbon Saved" value={`${carbonKg}`} unit="kg" delta="+12%" iconTone="green" glassStyle={glassCard} />
+        <StatCard icon={ShieldCheck} label="Trust Score" value={trustScore.toString()} unit="/100" delta="+1" iconTone="blue" glassStyle={glassCard} />
+        <StatCard icon={CarFront} label="Rides Completed" value={`${ridesCompleted}`} unit="" delta="+3" iconTone="amber" glassStyle={glassCard} />
 
-        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm xl:row-span-3">
+        <section className="rounded-2xl border border-white/40 shadow-sm xl:row-span-3" style={glassCard}>
           <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
             <h3 className="text-[24px] font-semibold leading-tight text-slate-900">Recent Activity</h3>
             <button type="button" className="text-sm font-semibold text-brand-600 hover:text-brand-700">View All</button>
@@ -162,17 +169,9 @@ function DashboardContent() {
           </div>
         </section>
 
-        <ActionCard href="/rides" icon={Search} title="Find a Ride" description="Search for drivers heading your way." />
-        <ActionCard href="/offer-ride" icon={SlidersHorizontal} title="Offer a Ride" description="Share your empty seats and earn points." />
+        <ActionCard href="/rides" icon={Search} title="Find a Ride" description="Search for drivers heading your way." glassStyle={glassCard} />
+        <ActionCard href="/offer-ride" icon={SlidersHorizontal} title="Offer a Ride" description="Share your empty seats and earn points." glassStyle={glassCard} />
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm xl:col-span-3">
-          <div className="relative flex h-64 items-center justify-center rounded-xl border border-slate-200 bg-[#e7e7e7] text-slate-500">
-            <span className="text-4xl tracking-[0.35em]">300×300</span>
-            <div className="absolute bottom-3 left-3 rounded-full bg-brand-100 px-3 py-1 text-xs font-semibold text-brand-700">
-              CURRENT LOCATION
-            </div>
-          </div>
-        </section>
       </section>
     </div>
   )
@@ -185,6 +184,7 @@ function StatCard({
   unit,
   delta,
   iconTone,
+  glassStyle,
 }: {
   icon: React.ComponentType<{ className?: string }>
   label: string
@@ -192,6 +192,7 @@ function StatCard({
   unit: string
   delta: string
   iconTone: 'green' | 'blue' | 'amber'
+  glassStyle?: React.CSSProperties
 }) {
   const iconClass = {
     green: 'bg-emerald-100 text-emerald-600',
@@ -200,7 +201,7 @@ function StatCard({
   }[iconTone]
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="rounded-2xl border border-white/40 p-4 shadow-sm" style={glassStyle}>
       <div className="flex items-start justify-between">
         <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${iconClass}`}>
           <Icon className="h-4 w-4" />
@@ -221,14 +222,16 @@ function ActionCard({
   icon: Icon,
   title,
   description,
+  glassStyle,
 }: {
   href: string
   icon: React.ComponentType<{ className?: string }>
   title: string
   description: string
+  glassStyle?: React.CSSProperties
 }) {
   return (
-    <Link href={href} className="flex rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-brand-300 hover:shadow-md">
+    <Link href={href} className="flex rounded-2xl border border-white/40 p-5 text-left shadow-sm transition hover:border-brand-300 hover:shadow-md" style={glassStyle}>
       <div className="flex w-full items-start justify-between">
         <div>
           <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-slate-700">

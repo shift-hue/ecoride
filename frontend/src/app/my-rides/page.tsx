@@ -74,7 +74,7 @@ function MyRidesContent() {
         </button>
       </div>
 
-      <div className="border-b border-slate-200">
+      <div className="border-b border-white/30">
         <div className="flex gap-8">
           <TabButton active={tab === 'upcoming'} onClick={() => setTab('upcoming')}>Upcoming</TabButton>
           <TabButton active={tab === 'completed'} onClick={() => setTab('completed')}>Completed</TabButton>
@@ -83,7 +83,7 @@ function MyRidesContent() {
       </div>
 
       {loading && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500">Loading your rides...</div>
+        <div className="rounded-2xl border border-white/40 p-6 text-sm text-slate-600" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)'}}>Loading your rides...</div>
       )}
 
       {!loading && error && (
@@ -93,7 +93,7 @@ function MyRidesContent() {
       {!loading && !error && (
         <section className="space-y-3">
           {filtered.length === 0 ? (
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500">
+            <div className="rounded-2xl border border-white/40 p-6 text-sm text-slate-600" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)'}}>
               No rides found in this tab.
             </div>
           ) : (
@@ -121,7 +121,7 @@ function TabButton({ active, children, onClick }: { active: boolean; children: R
       onClick={onClick}
       className={clsx(
         'border-b-2 pb-3 text-[15px] font-semibold transition-colors',
-        active ? 'border-brand-500 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700'
+        active ? 'border-brand-500 text-slate-900' : 'border-transparent text-slate-600 hover:text-slate-800'
       )}
     >
       {children}
@@ -165,9 +165,9 @@ function RideCard({ ride, onCancel }: { ride: MyRideDto; onCancel: (ride: MyRide
   const supportsCancel = ride.role === 'DRIVER' && (ride.rideStatus === 'OPEN' || ride.rideStatus === 'FULL')
 
   return (
-    <article className="grid rounded-2xl border border-slate-200 bg-white p-4 shadow-sm xl:grid-cols-[0.55fr_3fr]">
+    <article className="grid rounded-2xl border border-white/40 p-4 shadow-sm xl:grid-cols-[0.55fr_3fr]" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)'}}>
       <div className="flex items-center justify-center xl:justify-start">
-        <div className="w-[108px] rounded-xl border border-slate-200 bg-slate-50 px-2 py-3 text-center">
+          <div className="w-[108px] rounded-xl border border-white/40 bg-white/60 px-2 py-3 text-center">
           <p className="text-[12px] font-semibold tracking-wide text-slate-500">{month}</p>
           <p className="text-[34px] font-semibold leading-none text-slate-900">{day}</p>
           <p className="mt-1 text-[18px] text-slate-600">{time}</p>
@@ -175,7 +175,7 @@ function RideCard({ ride, onCancel }: { ride: MyRideDto; onCancel: (ride: MyRide
       </div>
 
       <div className="mt-4 xl:mt-0">
-        <div className="flex items-start justify-between border-b border-slate-100 pb-3">
+          <div className="flex items-start justify-between border-b border-white/30 pb-3">
           <div>
             <h3 className="text-[28px] font-semibold leading-tight text-slate-900">{routeTitle}</h3>
             <p className="mt-1 inline-flex items-center gap-1 text-[15px] text-slate-500">
@@ -202,7 +202,7 @@ function RideCard({ ride, onCancel }: { ride: MyRideDto; onCancel: (ride: MyRide
           <div className="flex items-center gap-2">
             <button type="button"
               onClick={() => router.push(`/inbox?peer=${ride.driverId}`)}
-              className="inline-flex h-10 items-center gap-2 rounded-lg bg-slate-100 px-4 text-sm font-medium text-slate-700 hover:bg-slate-200">
+              className="inline-flex h-10 items-center gap-2 rounded-lg bg-white/40 px-4 text-sm font-medium text-slate-700 hover:bg-white/60 border border-white/40">
               <MessageSquareText className="h-4 w-4" />
               Contact
             </button>
@@ -217,7 +217,7 @@ function RideCard({ ride, onCancel }: { ride: MyRideDto; onCancel: (ride: MyRide
             ) : (
               <button
                 type="button"
-                className="inline-flex h-10 items-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-600"
+                className="inline-flex h-10 items-center rounded-lg border border-white/40 bg-white/40 px-4 text-sm font-medium text-slate-600"
               >
                 {ride.participantStatus === 'REQUESTED' ? 'Modify Request' : 'Details'}
               </button>
