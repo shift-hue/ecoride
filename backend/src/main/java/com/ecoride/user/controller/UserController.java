@@ -1,8 +1,10 @@
 package com.ecoride.user.controller;
 
 import com.ecoride.common.response.ApiResponse;
+import com.ecoride.user.dto.UpdateUserRequest;
 import com.ecoride.user.dto.UserProfileDto;
 import com.ecoride.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,5 +27,12 @@ public class UserController {
     @GetMapping("/{id}")
     public ApiResponse<UserProfileDto> getById(@PathVariable UUID id) {
         return ApiResponse.ok(userService.getById(id));
+    }
+
+    @PatchMapping("/me")
+    public ApiResponse<UserProfileDto> updateMe(
+            @AuthenticationPrincipal UserDetails principal,
+            @Valid @RequestBody UpdateUserRequest req) {
+        return ApiResponse.ok(userService.updateMe(principal.getUsername(), req));
     }
 }

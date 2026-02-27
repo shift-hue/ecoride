@@ -2,6 +2,7 @@ package com.ecoride.ride.controller;
 
 import com.ecoride.common.response.ApiResponse;
 import com.ecoride.ride.dto.CreateRideRequest;
+import com.ecoride.ride.dto.MyRideDto;
 import com.ecoride.ride.dto.RideDto;
 import com.ecoride.ride.service.RideService;
 import jakarta.validation.Valid;
@@ -11,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -27,19 +29,24 @@ public class RideController {
         return ApiResponse.ok("Ride created", rideService.createRide(principal.getUsername(), req));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/my")
+    public ApiResponse<List<MyRideDto>> myRides(@AuthenticationPrincipal UserDetails principal) {
+        return ApiResponse.ok(rideService.getMyRides(principal.getUsername()));
+    }
+
+    @GetMapping("/{id:[0-9a-fA-F\\-]{36}}")
     public ApiResponse<RideDto> get(@PathVariable UUID id) {
         return ApiResponse.ok(rideService.getRide(id));
     }
 
-    @PostMapping("/{id}/join")
+    @PostMapping("/{id:[0-9a-fA-F\\-]{36}}/join")
     public ApiResponse<Void> join(@AuthenticationPrincipal UserDetails principal,
                                   @PathVariable UUID id) {
         rideService.joinRide(principal.getUsername(), id);
         return ApiResponse.ok("Joined ride successfully");
     }
 
-    @PostMapping("/{rideId}/confirm/{userId}")
+    @PostMapping("/{rideId:[0-9a-fA-F\\-]{36}}/confirm/{userId:[0-9a-fA-F\\-]{36}}")
     public ApiResponse<Void> confirm(@AuthenticationPrincipal UserDetails principal,
                                      @PathVariable UUID rideId,
                                      @PathVariable UUID userId) {
@@ -47,14 +54,14 @@ public class RideController {
         return ApiResponse.ok("Participant confirmed");
     }
 
-    @PostMapping("/{id}/complete")
+    @PostMapping("/{id:[0-9a-fA-F\\-]{36}}/complete")
     public ApiResponse<Void> complete(@AuthenticationPrincipal UserDetails principal,
                                       @PathVariable UUID id) {
         rideService.completeRide(principal.getUsername(), id);
         return ApiResponse.ok("Ride completed");
     }
 
-    @PostMapping("/{id}/cancel")
+    @PostMapping("/{id:[0-9a-fA-F\\-]{36}}/cancel")
     public ApiResponse<Void> cancel(@AuthenticationPrincipal UserDetails principal,
                                     @PathVariable UUID id) {
         rideService.cancelRide(principal.getUsername(), id);

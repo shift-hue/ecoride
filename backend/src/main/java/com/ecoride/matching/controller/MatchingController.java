@@ -26,10 +26,11 @@ public class MatchingController {
     @GetMapping("/match")
     public ApiResponse<List<MatchResultDto>> match(
             @RequestParam String zone,
+            @RequestParam(required = false, defaultValue = "") String destination,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant time,
             @AuthenticationPrincipal UserDetails principal) {
 
-        List<MatchResultDto> results = matchingService.findMatches(zone, time, principal.getUsername());
+        List<MatchResultDto> results = matchingService.findMatches(zone, destination, time, principal.getUsername());
         return ApiResponse.ok(results);
     }
 }

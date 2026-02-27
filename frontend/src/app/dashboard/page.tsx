@@ -1,19 +1,25 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
-import { carbonApi, predictionApi, trustApi, WalletDto, TrustProfileDto, PredictionDto } from '@/lib/api'
+import { carbonApi, trustApi, WalletDto, TrustProfileDto } from '@/lib/api'
 import AppShell from '@/components/AppShell'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import { Leaf, Award, TrendingUp, Lightbulb } from 'lucide-react'
-import clsx from 'clsx'
-
-const BADGE_COLORS: Record<string, string> = {
-  BRONZE:   'bg-amber-100 text-amber-700',
-  SILVER:   'bg-slate-100 text-slate-700',
-  GOLD:     'bg-yellow-100 text-yellow-700',
-  PLATINUM: 'bg-cyan-100 text-cyan-700',
-}
+import {
+  Leaf,
+  ShieldCheck,
+  CarFront,
+  Search,
+  SlidersHorizontal,
+  ChevronRight,
+  Check,
+  Clock3,
+  Wallet,
+  Sparkles,
+  BellDot,
+  ArrowRight,
+} from 'lucide-react'
 
 export default function DashboardPage() {
   return (
@@ -29,156 +35,210 @@ function DashboardContent() {
   const { user } = useAuth()
   const [wallet, setWallet] = useState<WalletDto | null>(null)
   const [trust, setTrust] = useState<TrustProfileDto | null>(null)
-  const [predictions, setPredictions] = useState<PredictionDto[]>([])
-  const [loadingData, setLoadingData] = useState(true)
 
   useEffect(() => {
     if (!user) return
     Promise.all([
       carbonApi.wallet(),
       trustApi.getProfile(user.id),
-      predictionApi.suggestions(),
     ])
-      .then(([w, t, p]) => {
+      .then(([w, t]) => {
         setWallet(w)
         setTrust(t)
-        setPredictions(p)
       })
       .catch(console.error)
-      .finally(() => setLoadingData(false))
   }, [user])
 
   if (!user) return null
 
-  const badge = user.badge ?? 'BRONZE'
+  const carbonKg = wallet ? Math.max(1, Math.round(wallet.totalCarbonSavedGrams / 1000)) : user.carbonCredits
+  const trustScore = trust?.trustScore ?? user.trustScore
+  const ridesCompleted = trust?.ridesCompleted ?? user.ridesCompleted
+
+  const recentActivity = [
+    {
+      icon: Check,
+      color: 'bg-emerald-100 text-emerald-600',
+      title: 'Ride Completed',
+      desc: 'Passenger: Michael B. · To Library',
+      meta: '+50 Points · 1.2kg CO2',
+      time: '2h ago',
+    },
+    {
+      icon: Clock3,
+      color: 'bg-blue-100 text-blue-600',
+      title: 'Ride Scheduled',
+      desc: 'Driver: Emily R. · To Downtown',
+      meta: 'Tomorrow at 9:00 AM',
+      time: 'Yesterday',
+    },
+    {
+      icon: Wallet,
+      color: 'bg-amber-100 text-amber-600',
+      title: 'Wallet Top-up',
+      desc: 'Via Credit Card ending 4242',
+      meta: '+$25.00',
+      time: '2d ago',
+    },
+    {
+      icon: Sparkles,
+      color: 'bg-violet-100 text-violet-600',
+      title: 'New Badge Earned',
+      desc: '"Super Commuter" Badge Unlocked',
+      meta: '',
+      time: '3d ago',
+    },
+    {
+      icon: BellDot,
+      color: 'bg-slate-100 text-slate-600',
+      title: 'Search Alert',
+      desc: 'New rides available for "Engineering Block"',
+      meta: '',
+      time: '4d ago',
+    },
+  ]
 
   return (
     <div className="space-y-6">
-      {/* Welcome */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Welcome back, {user.name} 👋</h1>
-        <p className="text-gray-500 text-sm mt-1">{user.email} · {user.department} · Year {user.year}</p>
+        <h1 className="text-[34px] font-semibold leading-tight text-slate-900">Dashboard</h1>
+        <p className="mt-1 text-[16px] text-brand-600">Welcome back, {user.name}! Your sustainable journey continues.</p>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard
-          icon={<Leaf className="w-5 h-5 text-brand-600" />}
-          label="Carbon Credits"
-          value={user.carbonCredits.toString()}
-          sub="earned"
-          color="brand"
-        />
-        <StatCard
-          icon={<Award className="w-5 h-5 text-yellow-600" />}
-          label="Trust Score"
-          value={user.trustScore.toString()}
-          sub={
-            <span className={clsx('text-xs font-semibold px-2 py-0.5 rounded-full', BADGE_COLORS[badge])}>
-              {badge}
+      <section className="rounded-2xl bg-gradient-to-r from-emerald-950 via-green-950 to-emerald-900 p-6 shadow-md">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <span className="inline-flex items-center rounded-full bg-brand-500/25 px-4 py-1 text-xs font-semibold tracking-wide text-brand-200">
+              ✨ AI SUGGESTION
             </span>
-          }
-          color="yellow"
-        />
-        <StatCard
-          icon={<TrendingUp className="w-5 h-5 text-blue-600" />}
-          label="Rides Completed"
-          value={user.ridesCompleted.toString()}
-          sub="total"
-          color="blue"
-        />
-        <StatCard
-          icon={<Leaf className="w-5 h-5 text-green-600" />}
-          label="CO₂ Saved"
-          value={wallet ? `${(wallet.totalCarbonSavedGrams / 1000).toFixed(2)} kg` : '—'}
-          sub="lifetime"
-          color="green"
-        />
-      </div>
-
-      {/* Carbon wallet */}
-      {wallet && (
-        <section className="bg-white rounded-2xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-            <Leaf className="w-4 h-4 text-brand-600" /> Carbon Wallet
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-            <div>
-              <p className="text-gray-500">Total Credits</p>
-              <p className="text-xl font-bold text-brand-700">{wallet.totalCarbonSavedGrams ? Math.floor(wallet.totalCarbonSavedGrams / 100) : 0}</p>
-            </div>
-            <div>
-              <p className="text-gray-500">CO₂ Saved</p>
-              <p className="text-xl font-bold text-green-700">{(wallet.totalCarbonSavedGrams / 1000).toFixed(2)} kg</p>
-            </div>
-            <div>
-              <p className="text-gray-500">Transactions</p>
-              <p className="text-xl font-bold text-gray-700">{wallet.transactionCount ?? (wallet as { recentTransactions?: unknown[] }).recentTransactions?.length ?? 0}</p>
-            </div>
+            <h2 className="mt-4 text-[34px] font-semibold leading-tight text-white">Match found: North Campus Commute</h2>
+            <p className="mt-2 max-w-3xl text-[16px] text-emerald-100">
+              Based on your Mon/Wed schedule at 8:30 AM, riding with Sarah K. saves 2.5 kg of CO2 and gets you preferred parking.
+            </p>
           </div>
-        </section>
-      )}
 
-      {/* Trust profile */}
-      {trust && (
-        <section className="bg-white rounded-2xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-            <Award className="w-4 h-4 text-yellow-600" /> Trust Profile
-          </h2>
           <div className="flex items-center gap-4">
-            <div className={clsx('px-4 py-2 rounded-xl font-bold text-lg', BADGE_COLORS[trust.badge ?? 'BRONZE'])}>
-              {trust.badge ?? 'BRONZE'}
+            <div className="flex -space-x-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-emerald-900 bg-emerald-200 text-xs font-semibold text-emerald-900">SK</div>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-emerald-900 bg-slate-700 text-xs font-semibold text-white">+2</div>
             </div>
-            <div className="text-sm">
-              <p><span className="text-gray-500">Score: </span><strong>{trust.trustScore}</strong></p>
-              <p><span className="text-gray-500">Unique ride partners: </span><strong>{trust.uniqueRidePartners}</strong></p>
+            <button type="button" className="inline-flex h-12 items-center gap-2 rounded-xl bg-brand-500 px-6 text-sm font-semibold text-slate-900 hover:bg-brand-400">
+              View Match
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr_1fr_1.45fr]">
+        <StatCard icon={Leaf} label="Carbon Saved" value={`${carbonKg}`} unit="kg" delta="+12%" iconTone="green" />
+        <StatCard icon={ShieldCheck} label="Trust Score" value={trustScore.toFixed(1)} unit="/5.0" delta="+0.1" iconTone="blue" />
+        <StatCard icon={CarFront} label="Rides Completed" value={`${ridesCompleted}`} unit="" delta="+3" iconTone="amber" />
+
+        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm xl:row-span-3">
+          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+            <h3 className="text-[24px] font-semibold leading-tight text-slate-900">Recent Activity</h3>
+            <button type="button" className="text-sm font-semibold text-brand-600 hover:text-brand-700">View All</button>
+          </div>
+          <div className="divide-y divide-slate-100">
+            {recentActivity.map((item) => {
+              const Icon = item.icon
+              return (
+                <div key={item.title} className="flex items-start gap-3 px-4 py-3">
+                  <div className={`mt-0.5 flex h-8 w-8 items-center justify-center rounded-full ${item.color}`}>
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-[14px] font-semibold text-slate-800">{item.title}</p>
+                      <span className="whitespace-nowrap text-xs text-slate-400">{item.time}</span>
+                    </div>
+                    <p className="text-[12px] text-slate-500">{item.desc}</p>
+                    {item.meta && <p className="text-xs font-semibold text-brand-600">{item.meta}</p>}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
+        <ActionCard href="/rides" icon={Search} title="Find a Ride" description="Search for drivers heading your way." />
+        <ActionCard href="/offer-ride" icon={SlidersHorizontal} title="Offer a Ride" description="Share your empty seats and earn points." />
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm xl:col-span-3">
+          <div className="relative flex h-64 items-center justify-center rounded-xl border border-slate-200 bg-[#e7e7e7] text-slate-500">
+            <span className="text-4xl tracking-[0.35em]">300×300</span>
+            <div className="absolute bottom-3 left-3 rounded-full bg-brand-100 px-3 py-1 text-xs font-semibold text-brand-700">
+              CURRENT LOCATION
             </div>
           </div>
         </section>
-      )}
-
-      {/* Predictions */}
-      {predictions.length > 0 && (
-        <section className="bg-white rounded-2xl shadow-sm border p-5">
-          <h2 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-            <Lightbulb className="w-4 h-4 text-purple-600" /> Smart Suggestions
-          </h2>
-          <div className="space-y-2">
-            {predictions.map((p, i) => (
-              <div key={i} className="bg-purple-50 border border-purple-100 rounded-lg px-4 py-3 text-sm text-purple-800">
-                {p.message}
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {loadingData && (
-        <div className="text-center text-gray-400 text-sm py-4 animate-pulse">Loading your stats…</div>
-      )}
+      </section>
     </div>
   )
 }
 
 function StatCard({
-  icon, label, value, sub, color,
+  icon: Icon,
+  label,
+  value,
+  unit,
+  delta,
+  iconTone,
 }: {
-  icon: React.ReactNode
+  icon: React.ComponentType<{ className?: string }>
   label: string
   value: string
-  sub: React.ReactNode
-  color: string
+  unit: string
+  delta: string
+  iconTone: 'green' | 'blue' | 'amber'
+}) {
+  const iconClass = {
+    green: 'bg-emerald-100 text-emerald-600',
+    blue: 'bg-blue-100 text-blue-600',
+    amber: 'bg-amber-100 text-amber-600',
+  }[iconTone]
+
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between">
+        <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${iconClass}`}>
+          <Icon className="h-4 w-4" />
+        </div>
+        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-600">{delta}</span>
+      </div>
+      <p className="mt-4 text-[14px] font-medium text-slate-600">{label}</p>
+      <p className="mt-1 text-[28px] font-semibold leading-none text-slate-900">
+        {value}
+        <span className="ml-1 text-[22px] font-medium text-slate-500">{unit}</span>
+      </p>
+    </section>
+  )
+}
+
+function ActionCard({
+  href,
+  icon: Icon,
+  title,
+  description,
+}: {
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  title: string
+  description: string
 }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border p-4">
-      <div className="flex items-center gap-2 mb-2">{icon}<span className="text-xs text-gray-500 font-medium">{label}</span></div>
-      <p className={clsx('text-2xl font-bold', {
-        'text-brand-700': color === 'brand',
-        'text-yellow-700': color === 'yellow',
-        'text-blue-700':  color === 'blue',
-        'text-green-700': color === 'green',
-      })}>{value}</p>
-      <div className="text-xs text-gray-400 mt-1">{sub}</div>
-    </div>
+    <Link href={href} className="flex rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-brand-300 hover:shadow-md">
+      <div className="flex w-full items-start justify-between">
+        <div>
+          <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-slate-700">
+            <Icon className="h-5 w-5" />
+          </div>
+          <h3 className="text-[22px] font-semibold leading-none text-slate-900">{title}</h3>
+          <p className="mt-2 text-[16px] text-brand-600">{description}</p>
+        </div>
+        <ChevronRight className="mt-2 h-5 w-5 text-slate-300" />
+      </div>
+    </Link>
   )
 }

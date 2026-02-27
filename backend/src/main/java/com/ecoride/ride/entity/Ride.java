@@ -30,6 +30,9 @@ public class Ride {
     @Column(name = "pickup_zone", nullable = false, length = 50)
     private String pickupZone;
 
+    @Column(name = "destination", length = 100)
+    private String destination;
+
     @Column(name = "departure_time", nullable = false)
     private Instant departureTime;
 
@@ -44,6 +47,9 @@ public class Ride {
     @Column(name = "is_subscription", nullable = false)
     @Builder.Default
     private boolean subscription = false;
+
+    @Column(name = "price_per_seat", precision = 10, scale = 2)
+    private java.math.BigDecimal pricePerSeat;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

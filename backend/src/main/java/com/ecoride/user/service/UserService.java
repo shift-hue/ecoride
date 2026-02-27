@@ -1,6 +1,7 @@
 package com.ecoride.user.service;
 
 import com.ecoride.common.exception.ApiException;
+import com.ecoride.user.dto.UpdateUserRequest;
 import com.ecoride.user.dto.UserProfileDto;
 import com.ecoride.user.entity.User;
 import com.ecoride.user.repository.UserRepository;
@@ -35,6 +36,23 @@ public class UserService {
                 .orElseThrow(() -> ApiException.notFound("User not found"));
     }
 
+    @Transactional
+    public UserProfileDto updateMe(String email, UpdateUserRequest req) {
+        User user = getEntityByEmail(email);
+        user.setName(req.getName());
+        if (req.getDepartment() != null) user.setDepartment(req.getDepartment());
+        if (req.getYear() != null)        user.setYear(req.getYear());
+        if (req.getVehicleModel() != null) user.setVehicleModel(req.getVehicleModel());
+        if (req.getVehicleNumber() != null) user.setVehicleNumber(req.getVehicleNumber());
+        if (req.getBio() != null)          user.setBio(req.getBio());
+        if (req.getPreferences() != null)  user.setPreferences(req.getPreferences());
+        if (req.getPhoneNumber() != null)  user.setPhoneNumber(req.getPhoneNumber());
+        if (req.getPhoneVerified() != null) user.setPhoneVerified(req.getPhoneVerified());
+        if (req.getLicenseVerified() != null) user.setLicenseVerified(req.getLicenseVerified());
+        userRepository.save(user);
+        return toDto(user);
+    }
+
     private UserProfileDto toDto(User user) {
         return UserProfileDto.builder()
                 .id(user.getId())
@@ -46,6 +64,13 @@ public class UserService {
                 .trustBadge(resolveBadge(user.getTrustScore()))
                 .ridesCompleted(user.getRidesCompleted())
                 .carbonCredits(user.getCarbonCredits())
+                .vehicleModel(user.getVehicleModel())
+                .vehicleNumber(user.getVehicleNumber())
+                .bio(user.getBio())
+                .preferences(user.getPreferences())
+                .phoneNumber(user.getPhoneNumber())
+                .phoneVerified(user.isPhoneVerified())
+                .licenseVerified(user.isLicenseVerified())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

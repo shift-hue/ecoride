@@ -21,8 +21,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MatchingService {
 
-    private static final int TIME_WINDOW_MINUTES = 30;
-    private static final int TOP_N = 3;
+    private static final int TIME_WINDOW_MINUTES = 30;  // used only for proximity scoring
+    private static final int SEARCH_WINDOW_DAYS   = 30; // how far ahead to look for rides
+    private static final int TOP_N = 10;
 
     private final RideRepository rideRepository;
     private final UserRepository userRepository;
@@ -37,17 +38,17 @@ public class MatchingService {
      *   - Existing trust connection: 10 points
      */
     @Transactional(readOnly = true)
-    public List<MatchResultDto> findMatches(String zone, Instant requestedTime, String requesterEmail) {
-        Instant from = requestedTime.minus(TIME_WINDOW_MINUTES, ChronoUnit.MINUTES);
-        Instant to   = requestedTime.plus(TIME_WINDOW_MINUTES, ChronoUnit.MINUTES);
+    public List<MatchResultDto> findMatches(String zone, String destination, Instant requestedTime, String requesterEmail) {
+        // Search from 2 hours before requested time through the next 30 days
+        Instant from = requestedTime.minus(2, ChronoUnit.HOURS);
+        Instant to   = requestedTime.plus(SEARCH_WINDOW_DAYS, ChronoUnit.DAYS);
 
-        List<Ride> candidates = rideRepository.findMatchingRides(zone, from, to, Ride.Status.OPEN);
+        List<Ride> candidates = rideRepository.findMatchingRides(zone, destination, from, to, Ride.Status.OPEN);
 
         User requester = userRepository.findByEmail(requesterEmail).orElse(null);
         UUID requesterId = requester != null ? requester.getId() : null;
 
         return candidates.stream()
-                .filter(r -> !r.getDriver().getId().equals(requesterId)) // exclude own rides
                 .map(r -> score(r, requestedTime, requester, requesterId))
                 .sorted(Comparator.comparingInt(MatchResultDto::getMatchScore).reversed())
                 .limit(TOP_N)
@@ -85,6 +86,7 @@ public class MatchingService {
                 .driverId(ride.getDriver().getId())
                 .driverName(ride.getDriver().getName())
                 .pickupZone(ride.getPickupZone())
+                .destination(ride.getDestination())
                 .departureTime(ride.getDepartureTime())
                 .availableSeats(ride.getAvailableSeats())
                 .matchScore(totalScore)

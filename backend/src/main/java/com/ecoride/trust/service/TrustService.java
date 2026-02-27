@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +53,30 @@ public class TrustService {
 
         List<TrustConnection> connections = trustConnectionRepository.findAllForUser(userId);
 
+        Map<UUID, String> userNames = userRepository.findAllById(
+                connections.stream()
+                    .map(connection -> connection.getUser1Id().equals(userId)
+                        ? connection.getUser2Id()
+                        : connection.getUser1Id())
+                    .toList())
+            .stream()
+            .collect(Collectors.toMap(User::getId, User::getName));
+
+        List<TrustProfileDto.TopConnectionDto> topConnections = connections.stream()
+            .sorted((a, b) -> Integer.compare(b.getMutualRideCount(), a.getMutualRideCount()))
+            .limit(4)
+            .map(connection -> {
+                UUID partnerId = connection.getUser1Id().equals(userId)
+                    ? connection.getUser2Id()
+                    : connection.getUser1Id();
+                return TrustProfileDto.TopConnectionDto.builder()
+                    .userId(partnerId)
+                    .name(userNames.getOrDefault(partnerId, "Campus Rider"))
+                    .mutualRides(connection.getMutualRideCount())
+                    .build();
+            })
+            .toList();
+
         return TrustProfileDto.builder()
                 .userId(user.getId())
                 .name(user.getName())
@@ -58,6 +84,7 @@ public class TrustService {
                 .badge(UserService.resolveBadge(user.getTrustScore()))
                 .ridesCompleted(user.getRidesCompleted())
                 .uniqueRidePartners(connections.size())
+            .topConnections(topConnections)
                 .build();
     }
 }

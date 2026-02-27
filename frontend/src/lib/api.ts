@@ -32,6 +32,13 @@ export interface UserProfile {
   ridesCompleted: number
   carbonCredits: number
   badge: string
+  vehicleModel: string | null
+  vehicleNumber: string | null
+  bio: string | null
+  preferences: string | null
+  phoneNumber: string | null
+  phoneVerified: boolean
+  licenseVerified: boolean
   createdAt: string
 }
 
@@ -47,27 +54,48 @@ export interface RideDto {
   createdAt: string
 }
 
+export interface MyRideDto {
+  rideId: string
+  role: 'DRIVER' | 'PASSENGER'
+  participantStatus: 'REQUESTED' | 'CONFIRMED' | 'CANCELLED'
+  driverId: string
+  driverName: string
+  pickupZone: string
+  destination: string
+  departureTime: string
+  availableSeats: number
+  rideStatus: 'OPEN' | 'FULL' | 'COMPLETED' | 'CANCELLED'
+}
+
 export interface CreateRideRequest {
   pickupZone: string
+  destination: string
   departureTime: string   // ISO-8601
   availableSeats: number
   isSubscription?: boolean
+  pricePerSeat?: number
 }
 
 export interface MatchResultDto {
   rideId: string
   driverName: string
   pickupZone: string
+  destination: string
   departureTime: string
   availableSeats: number
   matchScore: number
 }
 
 export interface WalletDto {
-  userId: string
+  totalCredits: number
   totalCarbonSavedGrams: number
-  totalCreditsEarned: number
-  transactionCount: number
+  totalCarbonSavedKg: number
+  recentTransactions: {
+    rideId: string
+    carbonSavedGrams: number
+    creditsEarned: number
+    createdAt: string
+  }[]
 }
 
 export interface CampusSummaryDto {
@@ -110,6 +138,25 @@ export interface CreateSubscriptionRequest {
   dayOfWeek: number
 }
 
+export interface ConversationDto {
+  peerId: string
+  peerName: string
+  peerDepartment: string | null
+  peerYear: number | null
+  lastMessage: string
+  lastMessageAt: string
+  unreadCount: number
+}
+
+export interface ChatMessageDto {
+  id: string
+  senderId: string
+  receiverId: string
+  content: string
+  read: boolean
+  createdAt: string
+}
+
 // ── Auth ─────────────────────────────────────────────────────────────────────
 
 export const authApi = {
@@ -120,11 +167,25 @@ export const authApi = {
     api.post<{ data: TokenResponse }>('/auth/login', body).then(r => r.data.data),
 }
 
+export interface UpdateUserRequest {
+  name: string
+  department?: string
+  year?: number
+  vehicleModel?: string
+  vehicleNumber?: string
+  bio?: string
+  preferences?: string
+  phoneNumber?: string
+  phoneVerified?: boolean
+  licenseVerified?: boolean
+}
+
 // ── Users ────────────────────────────────────────────────────────────────────
 
 export const userApi = {
   me: () => api.get<{ data: UserProfile }>('/users/me').then(r => r.data.data),
   getById: (id: string) => api.get<{ data: UserProfile }>(`/users/${id}`).then(r => r.data.data),
+  update: (body: UpdateUserRequest) => api.patch<{ data: UserProfile }>('/users/me', body).then(r => r.data.data),
 }
 
 // ── Rides ────────────────────────────────────────────────────────────────────
@@ -134,6 +195,8 @@ export const rideApi = {
     api.post<{ data: RideDto }>('/rides', body).then(r => r.data.data),
   get: (id: string) =>
     api.get<{ data: RideDto }>(`/rides/${id}`).then(r => r.data.data),
+  my: () =>
+    api.get<{ data: MyRideDto[] }>('/rides/my').then(r => r.data.data),
   join: (id: string) =>
     api.post<{ message: string }>(`/rides/${id}/join`).then(r => r.data),
   complete: (id: string) =>
@@ -145,8 +208,8 @@ export const rideApi = {
 // ── Matching ─────────────────────────────────────────────────────────────────
 
 export const matchApi = {
-  find: (zone: string, time: string) =>
-    api.get<{ data: MatchResultDto[] }>('/rides/match', { params: { zone, time } })
+  find: (zone: string, destination: string, time: string) =>
+    api.get<{ data: MatchResultDto[] }>('/rides/match', { params: { zone, destination, time } })
        .then(r => r.data.data),
 }
 
@@ -180,6 +243,17 @@ export const subscriptionApi = {
     api.post<{ data: SubscriptionDto }>(`/subscription/${id}/join`).then(r => r.data.data),
   myPools: () =>
     api.get<{ data: SubscriptionDto[] }>('/subscription/my').then(r => r.data.data),
+}
+
+// ── Messaging ────────────────────────────────────────────────────────────────
+
+export const messageApi = {
+  conversations: () =>
+    api.get<{ data: ConversationDto[] }>('/messages/conversations').then(r => r.data.data),
+  conversation: (peerId: string) =>
+    api.get<{ data: ChatMessageDto[] }>(`/messages/${peerId}`).then(r => r.data.data),
+  send: (peerId: string, content: string) =>
+    api.post<{ data: ChatMessageDto }>(`/messages/${peerId}`, { content }).then(r => r.data.data),
 }
 
 export default api

@@ -3,6 +3,7 @@ package com.ecoride.ride.service;
 import com.ecoride.carbon.service.CarbonService;
 import com.ecoride.common.exception.ApiException;
 import com.ecoride.ride.dto.CreateRideRequest;
+import com.ecoride.ride.dto.MyRideDto;
 import com.ecoride.ride.dto.RideDto;
 import com.ecoride.ride.entity.Ride;
 import com.ecoride.ride.entity.RideParticipant;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -36,9 +38,11 @@ public class RideService {
         Ride ride = Ride.builder()
                 .driver(driver)
                 .pickupZone(req.getPickupZone())
+                .destination(req.getDestination())
                 .departureTime(req.getDepartureTime())
                 .availableSeats(req.getAvailableSeats())
                 .subscription(req.isSubscription())
+                .pricePerSeat(req.getPricePerSeat())
                 .build();
 
         return RideDto.from(rideRepository.save(ride));
@@ -164,6 +168,27 @@ public class RideService {
     public RideDto getRide(UUID rideId) {
         return RideDto.from(getRideOrThrow(rideId));
     }
+
+        @Transactional(readOnly = true)
+        public List<MyRideDto> getMyRides(String email) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> ApiException.notFound("User not found"));
+
+        List<MyRideDto> driving = rideRepository.findByDriver_IdOrderByDepartureTimeAsc(user.getId())
+            .stream()
+            .map(MyRideDto::fromDriverRide)
+            .toList();
+
+        List<MyRideDto> passenger = participantRepository.findByUser_IdOrderByRide_DepartureTimeAsc(user.getId())
+            .stream()
+            .map(rp -> MyRideDto.fromParticipantRide(rp.getRide(), rp))
+            .toList();
+
+        return Stream.concat(driving.stream(), passenger.stream())
+            .distinct()
+            .sorted((a, b) -> a.getDepartureTime().compareTo(b.getDepartureTime()))
+            .toList();
+        }
 
     private Ride getRideOrThrow(UUID rideId) {
         return rideRepository.findById(rideId)

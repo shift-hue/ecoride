@@ -18,5 +18,12 @@ public class UserProfileDto {
     private String trustBadge;   // BRONZE, SILVER, GOLD, PLATINUM
     private int ridesCompleted;
     private int carbonCredits;
+    private String vehicleModel;
+    private String vehicleNumber;
+    private String bio;
+    private String preferences;
+    private String phoneNumber;
+    private boolean phoneVerified;
+    private boolean licenseVerified;
     private Instant createdAt;
 }

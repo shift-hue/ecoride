@@ -13,6 +13,7 @@ public class MatchResultDto {
     private UUID driverId;
     private String driverName;
     private String pickupZone;
+    private String destination;
     private Instant departureTime;
     private int availableSeats;
 
