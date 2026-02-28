@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import AppShell from '@/components/AppShell'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { carbonApi, WalletDto } from '@/lib/api'
@@ -46,6 +47,16 @@ function WalletContent() {
   const totalKg = wallet ? Math.max(0, Math.round(wallet.totalCarbonSavedGrams / 1000)) : 0
   const totalCredits = wallet?.totalCredits ?? 0
   const weeklyEarned = tx.slice(0, 3).reduce((sum, entry) => sum + entry.creditsEarned, 0)
+
+  // Subtract points already spent on vouchers (stored in localStorage)
+  const [spentPoints, setSpentPoints] = useState(0)
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('ecoride_vouchers') ?? '{}')
+      setSpentPoints(stored.spentPoints ?? 0)
+    } catch { setSpentPoints(0) }
+  }, [])
+  const displayPoints = Math.max(0, Math.floor(totalCredits / 10) - spentPoints)
 
   const chartBars = useMemo(() => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
@@ -176,14 +187,14 @@ function WalletContent() {
                 <p className="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold">Eco Credits</p>
                 <Wallet className="h-5 w-5" />
               </div>
-              <p className="mt-6 text-sm text-emerald-100">Available Balance</p>
-              <p className="mt-1 text-[40px] font-semibold leading-none">₹{(totalCredits / 10).toFixed(2)}</p>
-              <p className="mt-2 text-sm text-emerald-100">↑ ₹{(weeklyEarned / 10).toFixed(2)} earned this week</p>
+              <p className="mt-6 text-sm text-emerald-100">Available Points</p>
+              <p className="mt-1 text-[40px] font-semibold leading-none">{displayPoints}</p>
+              <p className="mt-2 text-sm text-emerald-100">↑ {(weeklyEarned / 10).toFixed(2)} earned this week</p>
 
               <div className="mt-7 flex items-center gap-2">
-                <button type="button" className="h-10 flex-1 rounded-lg bg-white text-sm font-semibold text-slate-800 hover:bg-slate-100">
+                <Link href="/redeem" className="flex h-10 flex-1 items-center justify-center rounded-lg bg-white text-sm font-semibold text-slate-800 hover:bg-slate-100">
                   Redeem
-                </button>
+                </Link>
                 <button type="button" className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white/20 hover:bg-white/30">
                   <RefreshCcw className="h-4 w-4" />
                 </button>

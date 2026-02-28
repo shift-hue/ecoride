@@ -41,40 +41,32 @@ export default function SOSButton() {
         aria-label="SOS Emergency"
         className="sos-btn fixed bottom-[88px] right-5 z-[60] lg:bottom-6"
         style={{
-          /* dark solid glass pill — high contrast, always visible */
-          background: 'rgba(30, 6, 6, 0.82)',
-          backdropFilter: 'blur(18px) saturate(160%)',
-          WebkitBackdropFilter: 'blur(18px) saturate(160%)',
-          border: '1px solid rgba(239,68,68,0.55)',
-          boxShadow:
-            '0 4px 28px 0 rgba(239,68,68,0.45), 0 2px 8px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,90,90,0.18)',
+          background: 'rgba(28, 28, 30, 0.88)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          border: '1.5px solid rgba(220,40,40,0.70)',
           borderRadius: '9999px',
-          height: '48px',
-          minWidth: '96px',
+          height: '44px',
+          padding: '0 18px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          gap: '6px',
-          padding: '0 20px',
+          gap: '8px',
           cursor: 'pointer',
+          boxShadow:
+            '0 0 0 3px rgba(200,30,30,0.22),' +        /* inner red ring */
+            '0 0 14px 4px rgba(220,40,40,0.45),' +     /* close red glow */
+            '0 0 32px 8px rgba(180,0,0,0.28),' +       /* wide ambient glow */
+            '0 4px 20px rgba(0,0,0,0.40),' +            /* base drop shadow */
+            'inset 0 0 12px 2px rgba(200,30,30,0.18)', /* inner red tint */
         }}
       >
-        <span
-          className="relative flex h-2 w-2 shrink-0"
-          aria-hidden="true"
-        >
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+        {/* red pulsing dot */}
+        <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden="true">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
         </span>
-        <span
-          style={{
-            fontSize: '14px',
-            fontWeight: 700,
-            letterSpacing: '0.06em',
-            color: 'rgba(255,255,255,0.92)',
-            textShadow: '0 1px 4px rgba(0,0,0,0.25)',
-          }}
-        >
+
+        <span style={{ fontSize: '15px', fontWeight: 700, letterSpacing: '0.08em', color: '#ffffff' }}>
           SOS
         </span>
       </button>
